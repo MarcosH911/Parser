@@ -15,8 +15,12 @@ V -> "smiled" | "tell" | "were"
 """
 
 NONTERMINALS = """
-S -> N V
+S -> NP VP
+VP -> V NP
+NP -> N | D N
 """
+
+CHARACTERS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "ñ", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
 grammar = nltk.CFG.fromstring(NONTERMINALS + TERMINALS)
 parser = nltk.ChartParser(grammar)
@@ -62,8 +66,13 @@ def preprocess(sentence):
     and removing any word that does not contain at least one alphabetic
     character.
     """
-    raise NotImplementedError
+    split_sentence = nltk.word_tokenize(sentence.lower())
 
+    for word in split_sentence:
+        if not any(c.isalpha() for c in word):
+            split_sentence.remove(word)
+
+    return split_sentence
 
 def np_chunk(tree):
     """
