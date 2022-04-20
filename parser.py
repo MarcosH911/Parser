@@ -15,9 +15,10 @@ V -> "smiled" | "tell" | "were"
 """
 
 NONTERMINALS = """
-S -> NP VP
-VP -> V NP
-NP -> N | D N
+S -> NP VP | NP VP Conj NP VP | NP VP Conj VP
+NP -> N | Det N | Det AP N | P NP | NP P NP
+VP -> V | Adv VP | V Adv | VP NP | V NP Adv
+AP -> Adj | AP Adj
 """
 
 CHARACTERS = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "ñ", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -81,7 +82,15 @@ def np_chunk(tree):
     whose label is "NP" that does not itself contain any other
     noun phrases as subtrees.
     """
-    raise NotImplementedError
+    chunks = []
+
+    parented_tree = nltk.ParentedTree.convert(tree)
+
+    for subtree in parented_tree.subtrees():
+        if subtree.label() == "N":
+            chunks.append(subtree.parent())
+
+    return chunks
 
 
 if __name__ == "__main__":
